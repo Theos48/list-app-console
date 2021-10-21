@@ -1,5 +1,3 @@
-const { resolve } = require('path/posix');
-
 require('colors');
 
 const mostrarMenu = () => {
