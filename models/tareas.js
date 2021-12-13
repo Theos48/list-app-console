@@ -1,3 +1,4 @@
+const { NIL } = require('uuid');
 const Tarea = require('./tarea.js');
 
 
@@ -13,13 +14,18 @@ class Tareas {
             listado.push( tarea );
         });
 
-
         return listado;
 
     }
 
     constructor() {
             this._listado = {};
+    }
+
+    borrarTarea( id='' ) {
+        if ( this._listado[id] ){
+            delete this._listado[id];
+        }
     }
 
     cargarTareasFromArray( tareas = [] ){
@@ -51,19 +57,39 @@ class Tareas {
         let indice = 0;
         this.listadoArr.forEach( (tarea) => {            
             const {desc, completadoEn } = tarea;
-
+            const estado = ( completadoEn )
+                                ? 'Completado'.green
+                                : 'Pendiente'.red;
             if (completadas){
-                if (!completadoEn){
-                    indice += 1;
-                    console.log(`${ String(indice).green } ${ desc } :: ${ 'Pendiente'.red }`);
-                }
-            }else{
                 if (completadoEn){
                     indice += 1;
-                    console.log(`${ String(indice).green } ${ desc } :: ${ 'Completado'.green }`);
+                    console.log(`${ (indice + '.').green } ${ desc } :: ${ completadoEn.green }`);
                 }
+            }else{
+                if (!completadoEn){
+                    indice += 1;
+                    console.log(`${ (indice + '.').green } ${ desc } :: ${ estado.red }`);
+                }                
             }
         });
+    }
+
+    toggleCompletadas ( ids = [] ) {
+
+        ids.forEach( id => {
+            const tarea = this._listado[id];
+            if ( !tarea.completadoEn ){
+                tarea.completadoEn = new Date().toISOString();
+            }
+        });
+
+        this.listadoArr.forEach( tarea => {
+            
+            if ( !ids.includes(tarea.id)) {
+                this._listado[tarea.id].completadoEn = null;
+            }
+        })
+
     }
 }
 
